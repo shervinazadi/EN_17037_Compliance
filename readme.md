@@ -20,7 +20,7 @@ conda install pip
 
 ```bash
 # redirect to the local directory of honeybee
-# cd homeybee
+# cd honeybee
 # create a symlink
 python -m pip install -e .
 ```
