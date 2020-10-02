@@ -1,4 +1,4 @@
-# /usr/local/radiance/bin/gensky 9 21 12 -c -B 11.1731843575419
+# gensky 9 21 12 -c -B 11.1731843575419
 # Local solar time: 11.98
 # Solar altitude and azimuth: 52.0 -0.6
 # Ground ambient level: 3.6
