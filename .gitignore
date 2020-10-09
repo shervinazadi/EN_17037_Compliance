@@ -199,3 +199,4 @@ dmypy.json
 *.sky
 *.oct
 *.res
+*.txt
