@@ -1,6 +1,8 @@
 # Rhino
 
+mtllib test_room_01.mtl
 g wall
+usemtl diffuse_0_0_0_255
 v 0 0 0
 v 0 0.42857122421264648 0
 v 0 0.85714292526245117 0
@@ -135,32 +137,38 @@ f 61 16 58
 f 62 18 61
 f 30 25 26
 f 29 26 27
+usemtl diffuse_0_0_0_255
 v 0 3 0
 v 0 3 -5
 v 5 3 0
 v 5 3 -5
 f 66 64 63 65
+usemtl diffuse_0_0_0_255
 v 0 0 0
 v 0 0 -5
 v 5 0 0
 v 5 0 -5
 f 70 69 67 68
+usemtl diffuse_0_0_0_255
 v 0 0 -5
 v 0 3 -5
 v 0 0 0
 v 0 3 0
 f 74 72 71 73
+usemtl diffuse_0_0_0_255
 v 5 0 -5
 v 5 3 -5
 v 0 0 -5
 v 0 3 -5
 f 78 76 75 77
+usemtl diffuse_0_0_0_255
 v 5 0 0
 v 5 3 0
 v 5 0 -5
 v 5 3 -5
 f 82 80 79 81
 g fen
+usemtl diffuse_200_0_0_255
 v 0.5 0.5 0
 v 0.5 2.5 0
 v 4.5 0.5 0
