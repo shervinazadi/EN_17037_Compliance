@@ -200,3 +200,5 @@ dmypy.json
 *.oct
 *.res
 *.txt
+recipe_notebooks/external_context_view/external_context_view.tif
+recipe_notebooks/external_context_view/external_context_view.hdr
