@@ -1,5 +1,5 @@
 
-import topogenesis as tp
+# import topogenesis as tp
 import numpy as np
 from honeybee_plus.hbsurface import HBSurface
 from honeybee_plus.radiance.recipe.solaraccess.gridbased import SolarAccessGridBased
@@ -29,7 +29,7 @@ material_plastic = {'modifier': 'void',
                     'roughness': 0.0}
 
 
-def mesh_to_hbsurface(mesh, s_type, s_name, mat):
+def pv_mesh_to_hbsurface(mesh, s_type, s_name, mat):
     hb_surfaces = []
     face_list = list(mesh.faces)
     e = 0
@@ -51,4 +51,24 @@ def mesh_to_hbsurface(mesh, s_type, s_name, mat):
         hbsrf = HBSurface.from_json(srf_dict)
         hb_surfaces.append(hbsrf)
         e += 1
+    return hb_surfaces
+
+
+def mesh_to_hbsurface(faces, vertices, s_type, s_name, mat):
+    hb_surfaces = []
+    for face in faces:
+        f_vertices = [tuple(vertices[v_id]) for v_id in face]
+        srf_dict = {
+            "name": s_name,
+            # [[(x, y, z), (x1, y1, z1), (x2, y2, z2)]],
+            "vertices": f_vertices,
+            "surface_material": mat,
+            "surface_type": s_type  # 0: wall, 5: window
+            # TODO: look for the lables of ceiling and floor
+            # TODO: check if radiance need unique names for surfaces!
+        }
+        srf_dict["surface_material"]["name"] = s_name
+        hb_srf = HBSurface.from_json(srf_dict)
+        hb_surfaces.append(hb_srf)
+
     return hb_surfaces
