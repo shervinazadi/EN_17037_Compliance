@@ -72,3 +72,24 @@ def mesh_to_hbsurface(faces, vertices, s_type, s_name, mat):
         hb_surfaces.append(hb_srf)
 
     return hb_surfaces
+
+
+def parse_results(rp, aggregate=False):
+    # results - in this case it will be an analysis grid
+    result = rp.results()[0]
+    dfs = []
+
+    # print(result.result_files)
+    for i, ap in enumerate(result._analysis_points):
+        data_dict = ap._values[0][0]
+        df = pd.DataFrame(data_dict)
+        dft = df.T
+        dft.columns = [i, i+1]
+        dfs.append(dft[i])
+
+    df = pd.concat(dfs, axis=1)
+
+    if not aggregate:
+        return df
+    else:
+        return df.sum(axis=0) / df.shape[0]
