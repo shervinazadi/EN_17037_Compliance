@@ -89,7 +89,8 @@ class ContextViewGridBased(GenericGridBased):
         if header:
             self.commands.append(self.header(project_folder))
 
-        octf = os.path.join(self.sub_folder, project_name + '.oct')
+        # octf = os.path.join(project_folder, self.sub_folder,project_name + '.oct')
+        octf = project_name + '.oct'
 
         view = honeybee_plus.radiance.view.View(name='indoor_fisheye',
                                                 view_point=(1, 1, 1),
@@ -154,14 +155,14 @@ class ContextViewGridBased(GenericGridBased):
         else:
             rc.rcalc_parameters.expression = "'$1=(0.265*$1+0.67*$2+0.065*$3)*179'"
         """
-        rpict_cmd_0 = 'rpict -w %s %s -af %s/%s.af %s > /dev/null' % (
-            rp_rpict, view, project_name, project_name, octf)
-        rpict_cmd = 'rpict -w %s %s -af %s/%s.af %s > %s/%s.hdr' % (
-            rp_rpict, view, project_name, project_name, octf, project_name, project_name)
-        normtiff_cmd = 'normtiff -h %s/%s.hdr %s/%s.tif' % (
-            project_name, project_name, project_name, project_name)
-        rtrace_cmd = 'vwrays %s | rtrace %s %s > %s/rtrace_res.txt' % (
-            view, rp_rtrace, octf, project_name)
+        rpict_cmd_0 = 'rpict -w %s %s -af %s.af %s > /dev/null' % (
+            rp_rpict, view, project_name, octf)
+        rpict_cmd = 'rpict -w %s %s -af %s.af %s > %s.hdr' % (
+            rp_rpict, view, project_name, octf, project_name)
+        normtiff_cmd = 'normtiff -h %s.hdr %s.tif' % (
+            project_name, project_name)
+        rtrace_cmd = 'vwrays %s | rtrace %s %s > rtrace_res.txt' % (
+            view, rp_rtrace, octf)
 
         # # 4.4 write batch file
         self._commands.append(rpict_cmd_0)
