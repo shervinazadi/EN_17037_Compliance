@@ -7,6 +7,8 @@ from honeybee_plus.radiance.command.oconv import Oconv
 from honeybee_plus.radiance.command.rtrace import Rtrace
 from honeybee_plus.radiance.command.rcalc import Rcalc
 from honeybee_plus.radiance.command.rpict import Rpict
+from honeybee_plus.radiance.command.vwrays import Vwrays
+
 from honeybee_plus.futil import write_to_file
 
 import numpy as np
@@ -103,6 +105,17 @@ class ContextViewGridBased(GenericGridBased):
                                                 y_resolution=128)
 
         rp_rpict = honeybee_plus.radiance.parameters.rpict.RpictParameters(0)
+        rp_rpict.add_radiance_value(
+            'af', descriptive_name='ambient file', attribute_name='ambient_file')
+        rp_rpict.ambient_file = project_name + ".af"
+        rc_rpict = Rpict(output_name=project_name, octree_file=octf, view=view,
+                         view_file=None, rpict_parameters=rp_rpict)
+
+        rp_vwrays = honeybee_plus.radiance.parameters.vwrays.VwraysParameters(
+            pixel_positions_stdin=None, unbuffered_output=None, calc_image_dim=None, x_resolution=128, y_resolution=128, jitter=None, sampling_rays_count=None)
+        rc_vwrays = Vwrays(view_file=None, vwrays_parameters=rp_vwrays, output_file=None,
+                           output_data_format=None)
+
         rp_rtrace = honeybee_plus.radiance.parameters.rtrace.LowQuality()
         # I didn't find a more elegant way to initialise the parameter class
         rp_rtrace.remove_parameters()
@@ -113,6 +126,8 @@ class ContextViewGridBased(GenericGridBased):
         rp_rtrace.add_radiance_bool_flag('w')
         rp_rtrace.w = True
 
+        rc_rtrace = Rtrace(output_name=project_name,
+                           octree_file=octf, radiance_parameters=rp_rtrace)
         """
         # 3.write sky file
         self._commands.append(self.sky.to_rad_string(folder='sky'))
@@ -165,6 +180,9 @@ class ContextViewGridBased(GenericGridBased):
             view, rp_rtrace, octf)
 
         # # 4.4 write batch file
+        self._commands.append(rc_rpict.to_rad_string())
+        self._commands.append(rc_rtrace.to_rad_string())
+        self._commands.append('\n')
         self._commands.append(rpict_cmd_0)
         self._commands.append(rpict_cmd)
         self._commands.append(normtiff_cmd)
