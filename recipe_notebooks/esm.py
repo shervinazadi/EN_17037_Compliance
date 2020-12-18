@@ -5,19 +5,19 @@ from honeybee_plus.radiance.recipe.recipeutil import write_rad_files, write_extr
 
 from honeybee_plus.radiance.command.oconv import Oconv
 from honeybee_plus.radiance.command.rtrace import Rtrace
-from honeybee_plus.radiance.command.rcalc import Rcalc
-from honeybee_plus.radiance.command.rpict import Rpict
-from honeybee_plus.radiance.command.vwrays import Vwrays
+# from honeybee_plus.radiance.command.rcalc import Rcalc
+# from honeybee_plus.radiance.command.rpict import Rpict
+# from honeybee_plus.radiance.command.vwrays import Vwrays
 
 from honeybee_plus.futil import write_to_file
 
 import numpy as np
 from honeybee_plus.hbsurface import HBSurface
-from honeybee_plus.radiance.recipe.solaraccess.gridbased import SolarAccessGridBased
-from honeybee_plus.radiance.sky.certainIlluminance import CertainIlluminanceLevel
-from honeybee_plus.radiance.recipe.pointintime.gridbased import GridBased
+# from honeybee_plus.radiance.recipe.solaraccess.gridbased import SolarAccessGridBased
+# from honeybee_plus.radiance.sky.certainIlluminance import CertainIlluminanceLevel
+# from honeybee_plus.radiance.recipe.pointintime.gridbased import GridBased
 from honeybee_plus.radiance.analysisgrid import AnalysisGrid
-from honeybee_plus.radiance.parameters.rtrace import LowQuality, RtraceParameters
+# from honeybee_plus.radiance.parameters.rtrace import LowQuality, RtraceParameters
 import os
 import honeybee_plus
 # import ladybug as lb
@@ -89,11 +89,11 @@ class ContextViewGridBased(GenericGridBased):
         points_file = self.write_analysis_grids(project_folder, project_name)
 
         # 2. save rays
-        icosphere = tm.creation.icosphere(subdivisions=3, radius=1.0)
+        icosphere = tm.creation.icosphere(subdivisions=5, radius=1.0)
         v = icosphere.vertices
         rays = np.c_[np.full(v.shape, 1), v]
 
-        view_rays_fname = "view_rays.txt"
+        view_rays_fname = 'view_rays.txt'
         view_rays_path = os.path.join(project_folder, view_rays_fname)
         np.savetxt(view_rays_path, rays)
 
