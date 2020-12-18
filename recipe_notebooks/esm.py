@@ -1,26 +1,18 @@
-
-# import topogenesis as tp
 from honeybee_plus.radiance.recipe._gridbasedbase import GenericGridBased
 from honeybee_plus.radiance.recipe.recipeutil import write_rad_files, write_extra_files
 
 from honeybee_plus.radiance.command.oconv import Oconv
 from honeybee_plus.radiance.command.rtrace import Rtrace
-# from honeybee_plus.radiance.command.rcalc import Rcalc
-# from honeybee_plus.radiance.command.rpict import Rpict
-# from honeybee_plus.radiance.command.vwrays import Vwrays
 
 from honeybee_plus.futil import write_to_file
 
 import numpy as np
 from honeybee_plus.hbsurface import HBSurface
-# from honeybee_plus.radiance.recipe.solaraccess.gridbased import SolarAccessGridBased
-# from honeybee_plus.radiance.sky.certainIlluminance import CertainIlluminanceLevel
-# from honeybee_plus.radiance.recipe.pointintime.gridbased import GridBased
 from honeybee_plus.radiance.analysisgrid import AnalysisGrid
-# from honeybee_plus.radiance.parameters.rtrace import LowQuality, RtraceParameters
+
 import os
 import honeybee_plus
-# import ladybug as lb
+
 import pandas as pd
 import trimesh as tm
 
