@@ -85,76 +85,28 @@ class ContextViewGridBased(GenericGridBased):
         # additional radiance files added to the recipe as scene
         extrafiles = write_extra_files(self.scene, project_folder + '/scene')
 
+        # 1.write points
+        points_file = self.write_analysis_grids(project_folder, project_name)
+
+        # 2. save rays
         icosphere = tm.creation.icosphere(subdivisions=3, radius=1.0)
         v = icosphere.vertices
         rays = np.c_[np.full(v.shape, 1), v]
 
-        view_rays_path = "view_rays.txt"
+        view_rays_fname = "view_rays.txt"
+        view_rays_path = os.path.join(project_folder, view_rays_fname)
         np.savetxt(view_rays_path, rays)
 
-        # 1.write points
-        points_file = self.write_analysis_grids(project_folder, project_name)
-
-        # 2.write batch file
+        # 3.write batch file
         if header:
             self.commands.append(self.header(project_folder))
 
-        octf = os.path.join(project_folder, self.sub_folder,
-                            project_name + '.oct')
-        # octf = project_name + '.oct'
+        # 4.1.prepare oconv
+        octf_name = project_name + '.oct'
+        octf = os.path.join(project_folder, self.sub_folder, octf_name)
 
-        # view = honeybee_plus.radiance.view.View(name='indoor_fisheye',
-        #                                         view_point=(1, 1, 1),
-        #                                         view_direction=(0, -1, 0),
-        #                                         view_up_vector=(0, 0, 1),
-        #                                         view_type=4,
-        #                                         view_h_size=180,
-        #                                         view_v_size=180,
-        #                                         x_resolution=128,
-        #                                         y_resolution=128)
-
-        # rp_rpict = honeybee_plus.radiance.parameters.rpict.RpictParameters(0)
-        # rp_rpict.add_radiance_value(
-        #     'af', descriptive_name='ambient file', attribute_name='ambient_file')
-        # rp_rpict.ambient_file = project_name + ".af"
-        # rc_rpict = Rpict(output_name=project_name, octree_file=octf, view=view,
-        #                  view_file=None, rpict_parameters=rp_rpict)
-
-        # rp_vwrays = honeybee_plus.radiance.parameters.vwrays.VwraysParameters(
-        #     pixel_positions_stdin=None, unbuffered_output=None, calc_image_dim=None, x_resolution=128, y_resolution=128, jitter=None, sampling_rays_count=None)
-        # rc_vwrays = Vwrays(view_file=None, vwrays_parameters=rp_vwrays, output_file=None,
-        #                    output_data_format=None)
-
-        rp_rtrace = honeybee_plus.radiance.parameters.rtrace.LowQuality()
-        rp_rtrace_init = honeybee_plus.radiance.parameters.rtrace.LowQuality()
-
-        rp_rtrace.remove_parameters()
-        rp_rtrace.add_radiance_number('ab')
-        rp_rtrace.ab = 0
-        rp_rtrace.add_radiance_value('o', is_joined=True)
-        rp_rtrace.o = 'vmlL'
-        rp_rtrace.add_radiance_bool_flag('w')
-        rp_rtrace.w = True
-        # print(rp_rtrace.to_rad_string())
-        rc_rtrace = Rtrace(output_name=project_name,
-                           octree_file=octf,
-                           simulation_type=2)
-        """
-        # 3.write sky file
-        self._commands.append(self.sky.to_rad_string(folder='sky'))
-
-        # 3.1. write ground and sky materials
-        skyground = self.sky.write_sky_ground(
-            os.path.join(project_folder, 'sky'))
-
-        # TODO(Mostapha): add window_groups here if any!
-        """
-        # # 4.1.prepare oconv
         oct_scene_files = \
             opqfiles + glzfiles + wgsfiles + extrafiles.fp
-        # oct_scene_files = \
-        #     [os.path.join(project_folder, str(self.sky.command('sky').output_file)),
-        #      skyground] + opqfiles + glzfiles + wgsfiles + extrafiles.fp
 
         oct_scene_files_items = []
         for f in oct_scene_files:
@@ -168,42 +120,29 @@ class ContextViewGridBased(GenericGridBased):
         oc = Oconv(project_name)
         oc.scene_files = tuple(self.relpath(f, project_folder)
                                for f in oct_scene_files_items)
-        """
-        # # 4.2.prepare rtrace
-        rt = Rtrace('result/' + project_name,
-                    simulation_type=self.simulation_type,
-                    radiance_parameters=self.radiance_parameters)
-        rt.radiance_parameters.h = True
-        rt.octree_file = str(oc.output_file)
-        rt.points_file = self.relpath(points_file, project_folder)
 
-        # # 4.3. add rcalc to convert rgb values to irradiance
-        rc = Rcalc('result/{}.ill'.format(project_name), str(rt.output_file))
+        # 4.2.prepare rtrace
+        rp_rtrace = honeybee_plus.radiance.parameters.rtrace.LowQuality()
 
-        if os.name == 'nt':
-            rc.rcalc_parameters.expression = '"$1=(0.265*$1+0.67*$2+0.065*$3)*179"'
-        else:
-            rc.rcalc_parameters.expression = "'$1=(0.265*$1+0.67*$2+0.065*$3)*179'"
-        """
-        # rpict_cmd_0 = 'rpict -w %s %s -af %s.af %s > /dev/null' % (
-        #     rp_rpict, view, project_name, octf)
-        # rpict_cmd = 'rpict -w %s %s -af %s.af %s > %s.hdr' % (
-        #     rp_rpict, view, project_name, octf, project_name)
-        # normtiff_cmd = 'normtiff -h %s.hdr %s.tif' % (
-        #     project_name, project_name)
+        rp_rtrace.remove_parameters()
+        rp_rtrace.add_radiance_number('ab')
+        rp_rtrace.ab = 0
+        rp_rtrace.add_radiance_value('o', is_joined=True)
+        rp_rtrace.o = 'vmlL'
+        rp_rtrace.add_radiance_bool_flag('w')
+        rp_rtrace.w = True
+
+        rc_rtrace = Rtrace(output_name=project_name,
+                           octree_file=octf,
+                           simulation_type=2)
+
         rtrace_cmd = '%s %s %s < %s > rtrace_res.txt' % (
             rc_rtrace.normspace(os.path.join(rc_rtrace.radbin_path, "rtrace")),
             rp_rtrace,
-            project_name + '.oct',
-            view_rays_path)
+            octf_name,
+            view_rays_fname)
 
-        # # 4.4 write batch file
-        # self._commands.append(rc_rpict.to_rad_string())
-        # self._commands.append(rc_rtrace.to_rad_string())
-        # self._commands.append('\n')
-        # self._commands.append(rpict_cmd_0)
-        # self._commands.append(rpict_cmd)
-        # self._commands.append(normtiff_cmd)
+        # 3.3 write batch file
         self._commands.append(oc.to_rad_string())
         self._commands.append(rtrace_cmd)
 
