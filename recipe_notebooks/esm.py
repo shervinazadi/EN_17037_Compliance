@@ -12,8 +12,6 @@ from honeybee_plus.radiance.analysisgrid import AnalysisGrid
 import os
 import honeybee_plus
 
-import pandas as pd
-
 
 class ContextViewGridBased(GenericGridBased):
     def __init__(self, analysis_grids, rad_parameters=None,
@@ -198,13 +196,3 @@ def mesh_to_hbsurface(faces, vertices, s_type, s_name, mat):
         hb_surfaces.append(hb_srf)
 
     return hb_surfaces
-
-
-def parse_results(rp, aggregate=False):
-
-    df = pd.read_csv(rp._result_files, skiprows=13, sep='\t', header=None)
-
-    if not aggregate:
-        return df
-    else:
-        return df.sum(axis=1) / df.shape[0]
