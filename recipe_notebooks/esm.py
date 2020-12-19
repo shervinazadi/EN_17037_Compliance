@@ -6,7 +6,6 @@ from honeybee_plus.radiance.command.rtrace import Rtrace
 
 from honeybee_plus.futil import write_to_file
 
-import numpy as np
 from honeybee_plus.hbsurface import HBSurface
 from honeybee_plus.radiance.analysisgrid import AnalysisGrid
 
@@ -14,7 +13,6 @@ import os
 import honeybee_plus
 
 import pandas as pd
-import trimesh as tm
 
 
 class ContextViewGridBased(GenericGridBased):
@@ -79,21 +77,13 @@ class ContextViewGridBased(GenericGridBased):
 
         # 1.write points
         points_file = self.write_analysis_grids(project_folder, project_name)
+        _, points_fname = os.path.split(points_file)
 
-        # 2. save rays
-        icosphere = tm.creation.icosphere(subdivisions=5, radius=1.0)
-        v = icosphere.vertices
-        rays = np.c_[np.full(v.shape, 1), v]
-
-        view_rays_fname = 'view_rays.txt'
-        view_rays_path = os.path.join(project_folder, view_rays_fname)
-        np.savetxt(view_rays_path, rays)
-
-        # 3.write batch file
+        # 2.write batch file
         if header:
             self.commands.append(self.header(project_folder))
 
-        # 4.1.prepare oconv
+        # 3.1.prepare oconv
         octf_name = project_name + '.oct'
         octf = os.path.join(project_folder, self.sub_folder, octf_name)
 
@@ -113,7 +103,7 @@ class ContextViewGridBased(GenericGridBased):
         oc.scene_files = tuple(self.relpath(f, project_folder)
                                for f in oct_scene_files_items)
 
-        # 4.2.prepare rtrace
+        # 3.2.prepare rtrace
         rp_rtrace = honeybee_plus.radiance.parameters.rtrace.LowQuality()
 
         rp_rtrace.remove_parameters()
@@ -132,7 +122,7 @@ class ContextViewGridBased(GenericGridBased):
             rc_rtrace.normspace(os.path.join(rc_rtrace.radbin_path, "rtrace")),
             rp_rtrace,
             octf_name,
-            view_rays_fname)
+            points_fname)
 
         # 3.3 write batch file
         self._commands.append(oc.to_rad_string())
