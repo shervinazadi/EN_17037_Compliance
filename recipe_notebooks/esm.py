@@ -75,7 +75,7 @@ class ContextViewGridBased(GenericGridBased):
         # additional radiance files added to the recipe as scene
         extrafiles = write_extra_files(self.scene, project_folder + '/scene')
 
-        # 1.write points
+        # 1.write points and rays
         points_file = self.write_analysis_grids(project_folder, project_name)
         _, points_fname = os.path.split(points_file)
 
