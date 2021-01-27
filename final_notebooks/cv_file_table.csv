@@ -1,0 +1,5 @@
+surface_name,surface_type,file_path,material_name
+wall,0,ref_room_walls.obj,material_plastic
+window,5,ref_room_window.obj,material_glass
+context_buildings,0,test_context_01_buildings.obj,material_plastic
+context_ground,0,test_context_01_ground.obj,material_plastic

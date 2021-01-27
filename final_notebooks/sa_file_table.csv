@@ -1,0 +1,3 @@
+surface_name,surface_type,file_path,material_name
+wall,0,ref_room_walls.obj,material_plastic
+window,5,ref_room_window.obj,material_glass
