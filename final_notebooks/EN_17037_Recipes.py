@@ -108,7 +108,7 @@ class ContextViewGridBased(GenericGridBased):
         rp_rtrace.add_radiance_number('ab')
         rp_rtrace.ab = 0
         rp_rtrace.add_radiance_value('o', is_joined=True)
-        rp_rtrace.o = 'vmlL'
+        rp_rtrace.o = 'vslL'
         rp_rtrace.add_radiance_bool_flag('w')
         rp_rtrace.w = True
 
@@ -116,6 +116,7 @@ class ContextViewGridBased(GenericGridBased):
                            octree_file=octf,
                            simulation_type=2)
 
+        # TODO: add radiance Sky
         rtrace_cmd = '%s %s %s < %s > rtrace_res.txt' % (
             rc_rtrace.normspace(os.path.join(rc_rtrace.radbin_path, "rtrace")),
             rp_rtrace,
