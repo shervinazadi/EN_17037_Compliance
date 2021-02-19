@@ -6,16 +6,16 @@ import random
 import itertools
 import pyrebase
 # import topogenesis as tg
-# import honeybee_plus as hb
+import honeybee_plus as hb
 
-# with open("fb_auth.json") as json_file:
-#     config = json.load(json_file)
+with open("fb_auth.json") as json_file:
+    config = json.load(json_file)
 
-# # create firebase app
-# firebase = pyrebase.initialize_app(config)
+# create firebase app
+firebase = pyrebase.initialize_app(config)
 
-# # access the database
-# fb_db = firebase.database()
+# access the database
+fb_db = firebase.database()
 
 
 def gate(request):
@@ -45,21 +45,26 @@ def gate(request):
     # retrieve the parameters
     req_dict = dict(request.args)
 
-    funcNames = json.loads(req_dict['function'])['funcNames']
+    funcs = json.loads(list(dict(request.args).keys())[0])['functions']
 
     # iterate over the functions and run them one by one
-    for funcNameItem in funcNames:
+    for func in funcs:
+        func_name = func['func_name']
+        data_key = func['main_key']
         # retrieve the requested function
-        func = globals()[funcNameItem]
+        func = globals()[func_name]
 
         # run the requested function and updating the funcdata
-        funcData = func()
+        funcData = func(data_key)
 
     d = {
         'result': "Done"
     }
     return (d, 200, headers)
 
+def intersect(main_key):
+    print("got you")
+    pass
 
 def TestFunction():
     # retrive all the cell data

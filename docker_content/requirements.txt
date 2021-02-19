@@ -5,4 +5,3 @@ scipy
 pyrebase
 functions-framework
 trimesh
-pyvista

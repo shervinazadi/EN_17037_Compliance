@@ -193,6 +193,10 @@ dmypy.json
 docker_content/libs/topoGenesis
 docker_content/libs/honeybee
 
+# firebase
+emergentium-firebase-adminsdk-cruo9-ee576a0df5.json
+fb_auth.json
+
 # Radiance simulation files rules
 *.bat
 *.dc

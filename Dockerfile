@@ -19,6 +19,8 @@ WORKDIR /home/genesis/app
 
 # copy the content of docker folder
 COPY ./docker_content .
+COPY ./data ./data
+COPY ./final_notebooks ./final_notebooks
 
 # install topogenesis and honeybee plus
 RUN python -m pip install -e libs/honeybee
@@ -27,5 +29,5 @@ RUN python -m pip install -e libs/topoGenesis
 # install the requirements
 RUN pip install -r requirements.txt
 
-# # run the server in debug mode
+# run the server in debug mode
 CMD exec functions-framework --target=gate --debug
