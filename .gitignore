@@ -200,3 +200,4 @@ dmypy.json
 *.oct
 *.res
 *.txt
+!requirements.txt
