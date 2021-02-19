@@ -7,6 +7,7 @@ import itertools
 import pyrebase
 # import topogenesis as tg
 import honeybee_plus as hb
+import EN_17037_Recipes as enr
 
 with open("fb_auth.json") as json_file:
     config = json.load(json_file)
@@ -63,7 +64,31 @@ def gate(request):
     return (d, 200, headers)
 
 def intersect(main_key):
-    print("got you")
+    # retrive all the data
+    db = fb_db.child(main_key).get()
+
+    # retrieve the data as dictionary
+    db_data = db.val()
+
+    print(db_data["V"])
+    # dataframes
+    V_df = pd.DataFrame.from_dict(db_data["V"], orient='columns')
+    F_df = pd.DataFrame.from_dict(db_data["F"], orient='columns')
+    RS_df = pd.DataFrame.from_dict(db_data["RS"], orient='columns')
+    RD_df = pd.DataFrame.from_dict(db_data["RD"], orient='columns')
+
+    # project name
+    project_name = main_key
+
+    # mesh to hb surfaces
+    hb_surfaces = enr.mesh_to_hbsurface(F_df.to_numpy(), V_df.to_numpy(), 0, "mesh", enr.material_plastic)
+
+    # create analysis grid
+    analysis_grid = enr.AnalysisGrid.from_points_and_vectors(RS_df.values.tolist(), RD_df.values.tolist(), project_name)
+
+    # put the recipe together
+    rp = enr.ContextViewGridBased(analysis_grids=(analysis_grid,),hb_objects=hb_surfaces)
+
     pass
 
 def TestFunction():
