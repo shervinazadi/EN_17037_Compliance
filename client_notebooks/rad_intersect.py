@@ -52,4 +52,4 @@ def intersect(mesh, ray_src, ray_dir, server_address):
 
     # # receive the response
     # response = urllib2.urlopen(req, json.dumps(req_data))
-    print(response)
+    print(response.text)

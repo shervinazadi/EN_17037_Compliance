@@ -8,6 +8,7 @@ import pyrebase
 # import topogenesis as tg
 import honeybee_plus as hb
 import EN_17037_Recipes as enr
+import os
 
 with open("fb_auth.json") as json_file:
     config = json.load(json_file)
@@ -61,7 +62,7 @@ def gate(request):
     d = {
         'result': "Done"
     }
-    return (d, 200, headers)
+    return (funcData, 200, headers)
 
 def intersect(main_key):
     # retrive all the data
@@ -70,7 +71,6 @@ def intersect(main_key):
     # retrieve the data as dictionary
     db_data = db.val()
 
-    print(db_data["V"])
     # dataframes
     V_df = pd.DataFrame.from_dict(db_data["V"], orient='columns')
     F_df = pd.DataFrame.from_dict(db_data["F"], orient='columns')
@@ -81,7 +81,7 @@ def intersect(main_key):
     project_name = main_key
 
     # mesh to hb surfaces
-    hb_surfaces = enr.mesh_to_hbsurface(F_df.to_numpy(), V_df.to_numpy(), 0, "mesh", enr.material_plastic)
+    hb_surfaces = enr.mesh_to_hbsurface(F_df.to_numpy(), V_df.to_numpy(), 0, "this_mesh", enr.material_plastic)
 
     # create analysis grid
     analysis_grid = enr.AnalysisGrid.from_points_and_vectors(RS_df.values.tolist(), RD_df.values.tolist(), project_name)
@@ -89,7 +89,25 @@ def intersect(main_key):
     # put the recipe together
     rp = enr.ContextViewGridBased(analysis_grids=(analysis_grid,),hb_objects=hb_surfaces)
 
-    pass
+    # write simulation to folder
+    batch_file = rp.write(target_folder='.', project_name=project_name)
+
+    # run the simulation
+    rp.run(batch_file, debug=False)
+
+    # load rtrace results
+    rs_path = os.path.join(project_name, 'gridbased', 'rtrace_res.txt')
+    rtrace_res = pd.read_csv(rs_path, skiprows=8, sep='\t', usecols=[3,4,5], header=None, names=['int_name', 'first_dist', 'last_dist'])
+
+    # Create data dict
+    data_dict = {
+        main_key + "/RI": rtrace_res.T.to_dict(),
+    }
+
+    # update database
+    fb_db.update(data_dict)
+    
+    return(f"{len(rtrace_res)} intersection found")
 
 def TestFunction():
     # retrive all the cell data
