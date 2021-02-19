@@ -4,19 +4,18 @@ import json
 import copy
 import random
 import itertools
-from numpy.lib.function_base import kaiser
 import pyrebase
+# import topogenesis as tg
+# import honeybee_plus as hb
 
-# for documentation: https://github.com/thisbejim/Pyrebase#database
+# with open("fb_auth.json") as json_file:
+#     config = json.load(json_file)
 
-with open("fb_auth.json") as json_file:
-    config = json.load(json_file)
+# # create firebase app
+# firebase = pyrebase.initialize_app(config)
 
-# create firebase app
-firebase = pyrebase.initialize_app(config)
-
-# access the database
-fb_db = firebase.database()
+# # access the database
+# fb_db = firebase.database()
 
 
 def gate(request):

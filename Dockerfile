@@ -1,22 +1,31 @@
-# starting from https://hub.docker.com/layers/ladybugtools/honeybee-radiance/1.33.0/images/sha256-2b133d61ff2707a1f842903b9192e46a9f7ab88680edb3375721a1c1d18fdda6?context=explore that includes, python + radiance installation 
-FROM ladybugtools/honeybee-radiance:1.33.0
+FROM python:3.7
+
+WORKDIR /home/genesis
+
+# Install radiance
+ENV RAYPATH=/home/genesis/lib
+ENV PATH="/home/genesis/bin:${PATH}"
+RUN curl -L https://ladybug-tools-releases.nyc3.digitaloceanspaces.com/Radiance_5.3a.fc2a2610_Linux.zip --output radiance.zip \
+&& unzip -p radiance.zip | tar xz \
+&& mkdir bin \
+&& mkdir lib \
+&& mv ./radiance-5.3.fc2a261076-Linux/usr/local/radiance/bin/* /home/genesis/bin \
+&& mv ./radiance-5.3.fc2a261076-Linux/usr/local/radiance/lib/* /home/genesis/lib \
+&& rm -rf radiance-5.3.fc2a261076-Linux \
+&& rm radiance.zip
 
 # Set current directory to app
-WORKDIR /app
+WORKDIR /home/genesis/app
 
 # copy the content of docker folder
 COPY ./docker_content .
 
+# install topogenesis and honeybee plus
+RUN python -m pip install -e libs/honeybee
+RUN python -m pip install -e libs/topoGenesis
+
 # install the requirements
 RUN pip install -r requirements.txt
 
-# copy the honeybee and topogenesis
-COPY ../topoGenesis ./topoGenesis
-COPY ../honeybee ./honeybee
-
-# install topogenesis and honeybee plus
-RUN python -m pip install -e ./topoGenesis
-RUN python -m pip install -e ./honeybee
-
-# run the server in debug mode
+# # run the server in debug mode
 CMD exec functions-framework --target=gate --debug
