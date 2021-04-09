@@ -34,7 +34,7 @@ def intersect(mesh, ray_src, ray_dir, server_address):
     
     # update database
     fb_db.update(data_dict)
-    print(main_key)
+    # print(main_key)
     # send request
     req_data = {
         "functions": [
@@ -52,4 +52,20 @@ def intersect(mesh, ray_src, ray_dir, server_address):
 
     # # receive the response
     # response = urllib2.urlopen(req, json.dumps(req_data))
-    print(response.text)
+    # print(response.text)
+
+    return main_key
+
+def retrieve(main_key):
+
+	# retrive all the data
+	db = fb_db.child(main_key + '/RI').get()
+
+	# retrieve the data as dictionary
+	db_data = db.val()
+
+	# dataframes
+	RI_df = pd.DataFrame.from_dict(db_data, orient='columns')
+
+	return RI_df
+

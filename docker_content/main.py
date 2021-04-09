@@ -107,7 +107,7 @@ def intersect(main_key):
     # update database
     fb_db.update(data_dict)
     
-    return(f"{len(rtrace_res)} intersection found")
+    return(f"{len(rtrace_res)} rays shot")
 
 def cors_function(request):
     # For more information about CORS and CORS preflight requests, see
