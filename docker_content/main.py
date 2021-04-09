@@ -9,6 +9,11 @@ import pyrebase
 import honeybee_plus as hb
 import EN_17037_Recipes as enr
 import os
+import pickle
+
+
+cwd = os.getcwd()
+src = os.path.dirname(cwd)
 
 with open("fb_auth.json") as json_file:
     config = json.load(json_file)
@@ -63,6 +68,48 @@ def gate(request):
         'result': "Done"
     }
     return (funcData, 200, headers)
+
+def intersect_local(data_path):
+    db_data = pickle.load(open(data_path, "rb"))
+
+    # dataframes
+    V_df = pd.DataFrame.from_dict(db_data["V"], orient='columns')
+    F_df = pd.DataFrame.from_dict(db_data["F"], orient='columns')
+    RS_df = pd.DataFrame.from_dict(db_data["RS"], orient='columns')
+    RD_df = pd.DataFrame.from_dict(db_data["RD"], orient='columns')
+
+    # project name
+    _, tail = os.path.split(data_path)
+    project_name = tail[:-2]
+
+    # mesh to hb surfaces
+    hb_surfaces = enr.mesh_to_hbsurface(V_df.to_numpy(), F_df.to_numpy(), 0, "this_mesh", enr.material_plastic)
+
+    # create analysis grid
+    analysis_grid = enr.AnalysisGrid.from_points_and_vectors(RS_df.values.tolist(), RD_df.values.tolist(), project_name)
+
+    # put the recipe together
+    rp = enr.ContextViewGridBased(analysis_grids=(analysis_grid,),hb_objects=hb_surfaces)
+
+    # write simulation to folder
+    batch_file = rp.write(target_folder='.', project_name=project_name)
+
+    # run the simulation
+    rp.run(batch_file, debug=False)
+
+    # load rtrace results
+    rs_path = os.path.join(project_name, 'gridbased', 'rtrace_res.txt')
+    rtrace_res = pd.read_csv(rs_path, skiprows=8, sep='\t', usecols=[3,4,5], header=None, names=['int_name', 'first_dist', 'last_dist'])
+
+    # Create data dict
+    data_dict = {
+        "RI": rtrace_res.T.to_dict(),
+    }
+
+    result_path = os.path.join(cwd, 'cache', project_name + '.p')
+    pickle.dump( data_dict, open(result_path, "wb" ) )
+    
+    return(f"result_path")
 
 def intersect(main_key):
     # retrive all the data
