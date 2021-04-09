@@ -34,7 +34,7 @@ def intersect(mesh, ray_src, ray_dir, server_address):
     
     # update database
     fb_db.update(data_dict)
-
+    print(main_key)
     # send request
     req_data = {
         "functions": [

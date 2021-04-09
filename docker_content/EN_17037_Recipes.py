@@ -179,7 +179,7 @@ def pv_mesh_to_hbsurface(mesh, s_type, s_name, mat):
     return hb_surfaces
 
 
-def mesh_to_hbsurface(faces, vertices, s_type, s_name, mat):
+def mesh_to_hbsurface(vertices, faces,  s_type, s_name, mat):
     hb_surfaces = []
     for face in faces:
         f_vertices = [tuple(vertices[v_id]) for v_id in face]
