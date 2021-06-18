@@ -23,8 +23,8 @@ COPY ./data ./data
 COPY ./final_notebooks ./final_notebooks
 
 # install topogenesis and honeybee plus
-RUN python -m pip install -e libs/honeybee
-RUN python -m pip install -e libs/topoGenesis
+RUN python -m pip install -e ./libs/honeybee
+RUN python -m pip install -e ./libs/topoGenesis
 
 # install the requirements
 RUN pip install -r requirements.txt
