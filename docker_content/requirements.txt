@@ -1,7 +1,0 @@
-numpy
-pandas
-networkx
-scipy
-pyrebase
-functions-framework
-trimesh
